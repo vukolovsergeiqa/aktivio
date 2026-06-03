@@ -9,7 +9,7 @@ const DEMO_EVENTS: AktivioEvent[] = [
     id: 'demo-1',
     title: 'Georgian Wine Tasting',
     description:
-      'Discover the world of Georgian wine! You will taste 6 varieties of wine from different regions of Georgia — Kakheti, Kartli and Imereti. The sommelier will tell you about the traditional method of winemaking in clay qvevri, which is more than 8000 years old. In the program: history of Georgian winemaking, introduction to main grape varieties, tasting rules and snacks.',
+      'Discover the world of Georgian wine! You will taste 6 varieties of wine from different regions of Georgia — Kakheti, Cartli and Imereti. The sommelier will tell you about the traditional method of winemaking in clay qvevri, which is more than 8000 years old. In the program: history of Georgian winemaking, introduction to main grape varieties, tasting rules and snacks.',
     category: 'tasting',
     city: 'Tbilisi',
     address: '12 Shardeni St',
@@ -22,6 +22,7 @@ const DEMO_EVENTS: AktivioEvent[] = [
     createdAt: new Date().toISOString(),
     payOnSite: true,
     payDirect: true,
+    languages: ['en', 'ru'],
     bankDetails: {
       bankName: 'TBC Bank',
       recipient: 'Nino Kvaratskhelia',
@@ -45,6 +46,7 @@ const DEMO_EVENTS: AktivioEvent[] = [
     createdAt: new Date().toISOString(),
     payOnSite: true,
     payDirect: true,
+    languages: ['en', 'ru', 'ka'],
     bankDetails: {
       bankName: 'Bank of Georgia',
       recipient: 'Tone Studio (Giorgi G.)',
@@ -68,6 +70,7 @@ const DEMO_EVENTS: AktivioEvent[] = [
     createdAt: new Date().toISOString(),
     payOnSite: true,
     payDirect: false,
+    languages: ['en', 'ka'],
   },
 ]
 

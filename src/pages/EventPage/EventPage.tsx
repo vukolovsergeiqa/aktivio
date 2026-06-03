@@ -83,6 +83,30 @@ export const EventPage = observer(() => {
               <div className={s.metaItem}><Users size={16} />{i18nStore.t('event.spots', { count: event.spots })}</div>
             </div>
 
+            <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+                {i18nStore.t('event.languages')}:
+              </span>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {(event.languages || ['en']).map((lang) => (
+                  <span
+                    key={lang}
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      padding: '3px 10px',
+                      background: 'var(--color-hover)',
+                      borderRadius: 'var(--radius-sm)',
+                      color: 'var(--color-text-secondary)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {lang === 'ka' ? 'GE' : lang.toUpperCase()}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             <div className={s.divider} />
 
             <div>

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { eventsStore } from '../../stores/events-store'
 import { i18nStore } from '../../stores/i18n-store'
-import { CATEGORIES } from '../../types'
+import { CATEGORIES, EVENT_LANGUAGES } from '../../types'
 import type { EventCategory } from '../../types'
 import { DatePicker } from '../../components/DatePicker/DatePicker'
 import { TimePicker } from '../../components/TimePicker/TimePicker'
@@ -80,6 +80,7 @@ export const AddEventPage = observer(() => {
     bankName: '',
     bankRecipient: '',
     bankAccount: '',
+    languages: [] as string[],
   })
   const [imageUrl, setImageUrl] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -104,6 +105,7 @@ export const AddEventPage = observer(() => {
           bankName: event.bankDetails?.bankName || '',
           bankRecipient: event.bankDetails?.recipient || '',
           bankAccount: event.bankDetails?.account || '',
+          languages: event.languages || ['en'],
         })
         setImageUrl(event.imageUrl)
       } else {
@@ -142,6 +144,7 @@ export const AddEventPage = observer(() => {
     form.time &&
     form.address.trim() &&
     form.organizer.trim() &&
+    form.languages.length > 0 &&
     (form.payOnSite || (form.payDirect && form.bankName.trim() && form.bankRecipient.trim() && form.bankAccount.trim()))
 
   function handleSubmit(e: React.FormEvent) {
@@ -163,6 +166,7 @@ export const AddEventPage = observer(() => {
       organizer: form.organizer.trim(),
       payOnSite: form.payOnSite,
       payDirect: form.payDirect,
+      languages: form.languages,
       bankDetails: form.payDirect ? {
         bankName: form.bankName.trim(),
         recipient: form.bankRecipient.trim(),
@@ -344,6 +348,32 @@ export const AddEventPage = observer(() => {
               onChange={(e) => set('organizer', e.target.value)}
               required
             />
+          </div>
+
+          {/* Languages */}
+          <div className={s.fieldGroup}>
+            <label className={s.label}>{i18nStore.t('add.languagesLabel')}</label>
+            <div className={s.checkboxGroup}>
+              {EVENT_LANGUAGES.map((langCode) => {
+                const isSelected = form.languages.includes(langCode)
+                const label = i18nStore.t('add.lang' + langCode.charAt(0).toUpperCase() + langCode.slice(1))
+                return (
+                  <label key={langCode} className={s.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        const nextLangs = e.target.checked
+                          ? [...form.languages, langCode]
+                          : form.languages.filter((l) => l !== langCode)
+                        set('languages', nextLangs)
+                      }}
+                    />
+                    <span>{label}</span>
+                  </label>
+                )
+              })}
+            </div>
           </div>
 
           {/* Payment Methods */}

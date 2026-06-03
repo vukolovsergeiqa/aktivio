@@ -39,12 +39,15 @@ export interface AktivioEvent {
   createdAt: string
   payOnSite: boolean
   payDirect: boolean
+  languages: string[] // ['en', 'ru', 'ka']
   bankDetails?: {
     bankName: string
     recipient: string
     account: string
   }
 }
+
+export const EVENT_LANGUAGES = ['en', 'ru', 'ka']
 
 export interface Booking {
   id: string

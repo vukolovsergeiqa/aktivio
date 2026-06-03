@@ -37,6 +37,25 @@ export const EventCard = observer(({ event }: Props) => {
       <div className={s.body}>
         <h3 className={s.title}>{event.title}</h3>
 
+        <div style={{ display: 'flex', gap: 4, margin: '6px 0 10px' }}>
+          {(event.languages || ['en']).map((lang) => (
+            <span
+              key={lang}
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                padding: '2px 6px',
+                background: 'var(--color-hover)',
+                borderRadius: '4px',
+                color: 'var(--color-text-secondary)',
+                textTransform: 'uppercase',
+              }}
+            >
+              {lang === 'ka' ? 'GE' : lang.toUpperCase()}
+            </span>
+          ))}
+        </div>
+
         <div className={s.meta}>
           <div className={s.metaRow}>
             <Calendar size={13} />
