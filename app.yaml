@@ -1,0 +1,12 @@
+name: aktivio
+region: fra
+static_sites:
+- name: aktivio-frontend
+  github:
+    repo: vukolovsergeiqa/aktivio
+    branch: main
+    deploy_on_push: true
+  source_dir: /
+  build_command: npm run build
+  output_dir: dist
+  catchall_document: index.html
