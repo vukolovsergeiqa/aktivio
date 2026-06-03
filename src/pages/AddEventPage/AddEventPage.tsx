@@ -1,12 +1,13 @@
-import { useState, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { eventsStore } from '../../stores/events-store'
 import { i18nStore } from '../../stores/i18n-store'
-import { CATEGORIES, CITIES } from '../../types'
+import { CATEGORIES } from '../../types'
 import type { EventCategory } from '../../types'
 import { DatePicker } from '../../components/DatePicker/DatePicker'
 import { TimePicker } from '../../components/TimePicker/TimePicker'
+import { CitySelect } from '../../components/CitySelect/CitySelect'
 import s from './AddEventPage.module.css'
 
 function compressImage(file: File): Promise<string> {
@@ -38,7 +39,9 @@ function compressImage(file: File): Promise<string> {
 
 export const AddEventPage = observer(() => {
   const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const isEdit = !!id
 
   if (eventsStore.currentRole === 'guest') {
     return (
@@ -81,6 +84,34 @@ export const AddEventPage = observer(() => {
   const [imageUrl, setImageUrl] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+  useEffect(() => {
+    if (isEdit && id) {
+      const event = eventsStore.getEventById(id)
+      if (event) {
+        setForm({
+          title: event.title,
+          description: event.description,
+          category: event.category,
+          city: event.city,
+          address: event.address,
+          date: event.date,
+          time: event.time,
+          price: String(event.price),
+          spots: String(event.spots),
+          organizer: event.organizer,
+          payOnSite: event.payOnSite,
+          payDirect: event.payDirect,
+          bankName: event.bankDetails?.bankName || '',
+          bankRecipient: event.bankDetails?.recipient || '',
+          bankAccount: event.bankDetails?.account || '',
+        })
+        setImageUrl(event.imageUrl)
+      } else {
+        navigate('/')
+      }
+    }
+  }, [id, isEdit, navigate])
+
   const set = (field: string, value: any) =>
     setForm((prev) => ({ ...prev, [field]: value }))
 
@@ -117,7 +148,8 @@ export const AddEventPage = observer(() => {
     e.preventDefault()
     if (!isValid || submitting) return
     setSubmitting(true)
-    const id = eventsStore.addEvent({
+    
+    const eventData = {
       title: form.title.trim(),
       description: form.description.trim(),
       category: form.category as EventCategory,
@@ -136,16 +168,25 @@ export const AddEventPage = observer(() => {
         recipient: form.bankRecipient.trim(),
         account: form.bankAccount.trim(),
       } : undefined
-    })
-    navigate(`/event/${id}`)
+    }
+
+    if (isEdit && id) {
+      eventsStore.updateEvent(id, eventData)
+      setSubmitting(false)
+      navigate(`/event/${id}`)
+    } else {
+      const newId = eventsStore.addEvent(eventData)
+      setSubmitting(false)
+      navigate(`/event/${newId}`)
+    }
   }
 
   return (
     <div className={s.page}>
       <div className="container">
         <div className={s.header}>
-          <h1 className={s.pageTitle}>{i18nStore.t('add.title')}</h1>
-          <p className={s.pageSub}>{i18nStore.t('add.subtitle')}</p>
+          <h1 className={s.pageTitle}>{isEdit ? i18nStore.t('add.editTitle') : i18nStore.t('add.title')}</h1>
+          <p className={s.pageSub}>{isEdit ? i18nStore.t('add.editSubtitle') : i18nStore.t('add.subtitle')}</p>
         </div>
 
         <form className={s.card} onSubmit={handleSubmit}>
@@ -216,17 +257,11 @@ export const AddEventPage = observer(() => {
           <div className={s.row}>
             <div className={s.fieldGroup}>
               <label className={s.label}>{i18nStore.t('add.cityLabel')}</label>
-              <select
-                className={s.select}
+              <CitySelect
                 value={form.city}
-                onChange={(e) => set('city', e.target.value)}
-              >
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>
-                    {i18nStore.t('cities.' + c)}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => set('city', val)}
+                variant="box"
+              />
             </div>
             <div className={s.fieldGroup}>
               <label className={s.label}>{i18nStore.t('add.addressLabel')}</label>
@@ -379,7 +414,9 @@ export const AddEventPage = observer(() => {
             className={s.submitBtn}
             disabled={!isValid || submitting}
           >
-            {submitting ? i18nStore.t('add.submittingButton') : i18nStore.t('add.submitButton')}
+            {submitting 
+              ? (isEdit ? i18nStore.t('add.editSubmittingButton') : i18nStore.t('add.submittingButton')) 
+              : (isEdit ? i18nStore.t('add.editSubmitButton') : i18nStore.t('add.submitButton'))}
           </button>
         </form>
       </div>

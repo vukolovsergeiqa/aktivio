@@ -12,6 +12,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/event/:id" element={<EventPage />} />
         <Route path="/add" element={<AddEventPage />} />
+        <Route path="/edit/:id" element={<AddEventPage />} />
       </Routes>
     </BrowserRouter>
   )

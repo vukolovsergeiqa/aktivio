@@ -2,7 +2,8 @@ import { observer } from 'mobx-react-lite'
 import { eventsStore } from '../../stores/events-store'
 import { i18nStore } from '../../stores/i18n-store'
 import { EventCard } from '../../components/EventCard/EventCard'
-import { CATEGORIES, CITIES } from '../../types'
+import { CitySelect } from '../../components/CitySelect/CitySelect'
+import { CATEGORIES } from '../../types'
 import s from './HomePage.module.css'
 
 export const HomePage = observer(() => {
@@ -49,18 +50,12 @@ export const HomePage = observer(() => {
               {i18nStore.t('categories.' + catKey)}
             </button>
           ))}
-          <select
-            className={s.citySelect}
+          <CitySelect
             value={filterCity}
-            onChange={(e) => eventsStore.setFilterCity(e.target.value)}
-          >
-            <option value="all">{i18nStore.t('home.allCities')}</option>
-            {CITIES.map((c) => (
-              <option key={c} value={c}>
-                {i18nStore.t('cities.' + c)}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => eventsStore.setFilterCity(val)}
+            showAllOption
+            variant="pill"
+          />
         </div>
       </div>
 

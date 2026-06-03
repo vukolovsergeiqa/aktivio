@@ -47,6 +47,7 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bookButton: 'Book a spot',
       paymentOnSiteNote: 'Pay on site · Demo mode',
       organizer: 'Organizer',
+      editButton: 'Edit Event',
       deleteButton: 'Delete Event',
       deleteConfirm: 'Delete event "{title}"?',
       bookingsTitle: 'Bookings list ({count})',
@@ -62,6 +63,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
     add: {
       title: 'Add Event',
       subtitle: 'Fill in the information about your event',
+      editTitle: 'Edit Event',
+      editSubtitle: 'Update the information about your event',
       nameLabel: 'Event name *',
       namePlaceholder: 'e.g. Georgian Cooking Masterclass',
       catLabel: 'Category *',
@@ -90,6 +93,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bankAccountPlaceholder: 'GE79BG... or +995...',
       submitButton: 'Publish event',
       submittingButton: 'Publishing...',
+      editSubmitButton: 'Save changes',
+      editSubmittingButton: 'Saving...',
       deniedTitle: 'Access Restricted',
       deniedText: 'This section is only available for administrators. To add an event, switch to Admin mode in the header.',
       deniedButton: 'Log in as Admin'
@@ -173,6 +178,7 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bookButton: 'Забронировать место',
       paymentOnSiteNote: 'Оплата на месте · Демо-режим',
       organizer: 'Организатор',
+      editButton: 'Редактировать',
       deleteButton: 'Удалить мероприятие',
       deleteConfirm: 'Удалить мероприятие «{title}»?',
       bookingsTitle: 'Список записей ({count})',
@@ -188,6 +194,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
     add: {
       title: 'Добавить мероприятие',
       subtitle: 'Заполните информацию о вашем событии',
+      editTitle: 'Редактировать мероприятие',
+      editSubtitle: 'Обновите информацию о вашем событии',
       nameLabel: 'Название *',
       namePlaceholder: 'Например: Мастер-класс по грузинской кухне',
       catLabel: 'Категория *',
@@ -216,6 +224,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bankAccountPlaceholder: 'GE79BG... или +995...',
       submitButton: 'Опубликовать мероприятие',
       submittingButton: 'Публикуем...',
+      editSubmitButton: 'Сохранить изменения',
+      editSubmittingButton: 'Сохраняем...',
       deniedTitle: 'Доступ ограничен',
       deniedText: 'Этот раздел доступен только для администраторов. Чтобы добавить мероприятие, переключитесь в режим администратора в шапке.',
       deniedButton: 'Войти как администратор'
@@ -299,6 +309,7 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bookButton: 'ადგილის დაჯავშნა',
       paymentOnSiteNote: 'გადახდა ადგილზე · დემო რეჟიმი',
       organizer: 'ორგანიზატორი',
+      editButton: 'რედაქტირება',
       deleteButton: 'ღონისძიების წაშლა',
       deleteConfirm: 'გსურთ წაშალოთ ღონისძიება "{title}"?',
       bookingsTitle: 'ჯავშნების სია ({count})',
@@ -314,6 +325,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
     add: {
       title: 'ღონისძიების დამატება',
       subtitle: 'შეავსეთ ინფორმაცია თქვენი ღონისძიების შესახებ',
+      editTitle: 'ღონისძиების რედაქტირება',
+      editSubtitle: 'განაახლეთ ინფორმაცია ღონისძიების შესახებ',
       nameLabel: 'სახელწოდება *',
       namePlaceholder: 'მაგ: ქართული კულინარიის მასტერკლასი',
       catLabel: 'კატეგორია *',
@@ -342,6 +355,8 @@ const TRANSLATIONS: Record<Language, Record<string, any>> = {
       bankAccountPlaceholder: 'GE79BG... ან +995...',
       submitButton: 'ღონისძიების გამოქვეყნება',
       submittingButton: 'ქვეყნდება...',
+      editSubmitButton: 'ცვლილებების შენახვა',
+      editSubmittingButton: 'ინახება...',
       deniedTitle: 'წვდომა შეზღუდულია',
       deniedText: 'ეს განყოფილება ხელმისაწვდომია მხოლოდ ადმინისტრატორებისთვის. ღონისძიების დასამატებლად გადაერთეთ ადმინისტრატორის რეჟიმზე.',
       deniedButton: 'შესვლა როგორც ადმინისტრატორი'

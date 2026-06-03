@@ -181,6 +181,9 @@ export const EventPage = observer(() => {
             {eventsStore.currentRole === 'admin' && (
               <>
                 <div className={s.sideDivider} />
+                <Link to={`/edit/${event.id}`} className={s.editBtn}>
+                  {i18nStore.t('event.editButton')}
+                </Link>
                 <button className={s.deleteBtn} onClick={handleDelete}>
                   {i18nStore.t('event.deleteButton')}
                 </button>

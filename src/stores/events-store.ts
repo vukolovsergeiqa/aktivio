@@ -158,6 +158,17 @@ class EventsStore {
     return event.id
   }
 
+  updateEvent(id: string, data: Omit<AktivioEvent, 'id' | 'createdAt'>) {
+    const index = this.events.findIndex((e) => e.id === id)
+    if (index !== -1) {
+      this.events[index] = {
+        ...this.events[index],
+        ...data,
+      }
+      this.saveToStorage()
+    }
+  }
+
   deleteEvent(id: string) {
     this.events = this.events.filter((e) => e.id !== id)
     this.saveToStorage()
