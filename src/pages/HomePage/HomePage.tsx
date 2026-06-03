@@ -1,11 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { eventsStore } from '../../stores/events-store'
+import { i18nStore } from '../../stores/i18n-store'
 import { EventCard } from '../../components/EventCard/EventCard'
-import { CATEGORY_LABELS, CITIES } from '../../types'
-import type { EventCategory } from '../../types'
+import { CATEGORIES, CITIES } from '../../types'
 import s from './HomePage.module.css'
-
-const ALL_CATEGORIES = Object.entries(CATEGORY_LABELS) as [EventCategory, string][]
 
 export const HomePage = observer(() => {
   const { filteredEvents, filterCategory, filterCity, searchQuery } = eventsStore
@@ -16,16 +14,16 @@ export const HomePage = observer(() => {
       <section className={s.hero}>
         <div className="container">
           <h1 className={s.heroTitle}>
-            Всё интересное <span>Тбилиси</span><br />в одном месте
+            {i18nStore.t('home.heroTitle')}
           </h1>
           <p className={s.heroSub}>
-            Мастер-классы, дегустации, экскурсии и многое другое — находи и бронируй за пару кликов
+            {i18nStore.t('home.heroSub')}
           </p>
           <div className={s.searchRow}>
             <input
               className={s.searchInput}
               type="text"
-              placeholder="Поиск мероприятий..."
+              placeholder={i18nStore.t('home.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => eventsStore.setSearchQuery(e.target.value)}
             />
@@ -40,15 +38,15 @@ export const HomePage = observer(() => {
             className={`${s.chip} ${filterCategory === 'all' ? s.chipActive : ''}`}
             onClick={() => eventsStore.setFilterCategory('all')}
           >
-            🗓 Все
+            {i18nStore.t('home.allCats')}
           </button>
-          {ALL_CATEGORIES.map(([key, label]) => (
+          {CATEGORIES.map((catKey) => (
             <button
-              key={key}
-              className={`${s.chip} ${filterCategory === key ? s.chipActive : ''}`}
-              onClick={() => eventsStore.setFilterCategory(key)}
+              key={catKey}
+              className={`${s.chip} ${filterCategory === catKey ? s.chipActive : ''}`}
+              onClick={() => eventsStore.setFilterCategory(catKey)}
             >
-              {label}
+              {i18nStore.t('categories.' + catKey)}
             </button>
           ))}
           <select
@@ -56,9 +54,11 @@ export const HomePage = observer(() => {
             value={filterCity}
             onChange={(e) => eventsStore.setFilterCity(e.target.value)}
           >
-            <option value="all">Все города</option>
+            <option value="all">{i18nStore.t('home.allCities')}</option>
             {CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
+              <option key={c} value={c}>
+                {i18nStore.t('cities.' + c)}
+              </option>
             ))}
           </select>
         </div>
@@ -68,16 +68,18 @@ export const HomePage = observer(() => {
       <section className={s.section}>
         <div className="container">
           <div className={s.sectionHeader}>
-            <h2 className={s.sectionTitle}>Ближайшие мероприятия</h2>
-            <span className={s.count}>{filteredEvents.length} событий</span>
+            <h2 className={s.sectionTitle}>{i18nStore.t('home.nearestEvents')}</h2>
+            <span className={s.count}>
+              {i18nStore.t('home.eventsCount', { count: filteredEvents.length })}
+            </span>
           </div>
 
           <div className={s.grid}>
             {filteredEvents.length === 0 ? (
               <div className={s.empty}>
                 <div className={s.emptyIcon}>🔍</div>
-                <p className={s.emptyTitle}>Ничего не найдено</p>
-                <p className={s.emptyText}>Попробуйте изменить фильтры или добавьте первое мероприятие</p>
+                <p className={s.emptyTitle}>{i18nStore.t('home.nothingFound')}</p>
+                <p className={s.emptyText}>{i18nStore.t('home.nothingFoundSub')}</p>
               </div>
             ) : (
               filteredEvents.map((event) => (

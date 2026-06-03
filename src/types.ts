@@ -10,18 +10,18 @@ export type EventCategory =
   | 'cooking'
   | 'other'
 
-export const CATEGORY_LABELS: Record<EventCategory, string> = {
-  tasting: '🍷 Дегустации',
-  workshop: '🎨 Мастер-классы',
-  tour: '🚶 Экскурсии',
-  concert: '🎵 Концерты',
-  kids: '👶 Для детей',
-  yoga: '🧘 Йога',
-  cooking: '🍳 Кулинария',
-  other: '📌 Другое',
-}
+export const CATEGORIES: EventCategory[] = [
+  'tasting',
+  'workshop',
+  'tour',
+  'concert',
+  'kids',
+  'yoga',
+  'cooking',
+  'other'
+]
 
-export const CITIES = ['Тбилиси', 'Батуми', 'Кутаиси', 'Мцхета', 'Сигнахи']
+export const CITIES = ['Tbilisi', 'Batumi', 'Kutaisi', 'Mtskheta', 'Sighnaghi']
 
 export interface AktivioEvent {
   id: string

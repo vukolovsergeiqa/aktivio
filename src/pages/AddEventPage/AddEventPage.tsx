@@ -2,11 +2,10 @@ import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { eventsStore } from '../../stores/events-store'
-import { CATEGORY_LABELS, CITIES } from '../../types'
+import { i18nStore } from '../../stores/i18n-store'
+import { CATEGORIES, CITIES } from '../../types'
 import type { EventCategory } from '../../types'
 import s from './AddEventPage.module.css'
-
-const ALL_CATEGORIES = Object.entries(CATEGORY_LABELS) as [EventCategory, string][]
 
 function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -44,16 +43,16 @@ export const AddEventPage = observer(() => {
       <div className={s.deniedPage}>
         <div className={s.deniedContainer}>
           <div className={s.deniedIcon}>🔐</div>
-          <h1 className={s.deniedTitle}>Доступ ограничен</h1>
+          <h1 className={s.deniedTitle}>{i18nStore.t('add.deniedTitle')}</h1>
           <p className={s.deniedText}>
-            Этот раздел доступен только для администраторов. Чтобы добавить мероприятие, переключитесь в режим администратора.
+            {i18nStore.t('add.deniedText')}
           </p>
           <button
             type="button"
             className="btn-primary"
             onClick={() => eventsStore.setRole('admin')}
           >
-            Войти как администратор
+            {i18nStore.t('add.deniedButton')}
           </button>
         </div>
       </div>
@@ -64,7 +63,7 @@ export const AddEventPage = observer(() => {
     title: '',
     description: '',
     category: '' as EventCategory | '',
-    city: 'Тбилиси',
+    city: 'Tbilisi',
     address: '',
     date: '',
     time: '',
@@ -88,7 +87,7 @@ export const AddEventPage = observer(() => {
       const base64 = await compressImage(file)
       setImageUrl(base64)
     } catch {
-      alert('Не удалось загрузить изображение')
+      alert('Failed to compress image')
     }
   }, [])
 
@@ -143,18 +142,18 @@ export const AddEventPage = observer(() => {
     <div className={s.page}>
       <div className="container">
         <div className={s.header}>
-          <h1 className={s.pageTitle}>Добавить мероприятие</h1>
-          <p className={s.pageSub}>Заполните информацию о вашем событии</p>
+          <h1 className={s.pageTitle}>{i18nStore.t('add.title')}</h1>
+          <p className={s.pageSub}>{i18nStore.t('add.subtitle')}</p>
         </div>
 
         <form className={s.card} onSubmit={handleSubmit}>
 
           {/* Title */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Название *</label>
+            <label className={s.label}>{i18nStore.t('add.nameLabel')}</label>
             <input
               className={s.input}
-              placeholder="Например: Мастер-класс по грузинской кухне"
+              placeholder={i18nStore.t('add.namePlaceholder')}
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
               required
@@ -163,16 +162,16 @@ export const AddEventPage = observer(() => {
 
           {/* Category */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Категория *</label>
+            <label className={s.label}>{i18nStore.t('add.catLabel')}</label>
             <div className={s.chips}>
-              {ALL_CATEGORIES.map(([key, label]) => (
+              {CATEGORIES.map((catKey) => (
                 <button
                   type="button"
-                  key={key}
-                  className={`${s.chip} ${form.category === key ? s.chipActive : ''}`}
-                  onClick={() => set('category', key)}
+                  key={catKey}
+                  className={`${s.chip} ${form.category === catKey ? s.chipActive : ''}`}
+                  onClick={() => set('category', catKey)}
                 >
-                  {label}
+                  {i18nStore.t('categories.' + catKey)}
                 </button>
               ))}
             </div>
@@ -180,10 +179,10 @@ export const AddEventPage = observer(() => {
 
           {/* Description */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Описание</label>
+            <label className={s.label}>{i18nStore.t('add.descLabel')}</label>
             <textarea
               className={s.textarea}
-              placeholder="Расскажите подробнее о мероприятии..."
+              placeholder={i18nStore.t('add.descPlaceholder')}
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               rows={4}
@@ -193,7 +192,7 @@ export const AddEventPage = observer(() => {
           {/* Date + Time */}
           <div className={s.row}>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Дата *</label>
+              <label className={s.label}>{i18nStore.t('add.dateLabel')}</label>
               <input
                 type="date"
                 className={s.input}
@@ -204,7 +203,7 @@ export const AddEventPage = observer(() => {
               />
             </div>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Время *</label>
+              <label className={s.label}>{i18nStore.t('add.timeLabel')}</label>
               <input
                 type="time"
                 className={s.input}
@@ -218,20 +217,24 @@ export const AddEventPage = observer(() => {
           {/* City + Address */}
           <div className={s.row}>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Город</label>
+              <label className={s.label}>{i18nStore.t('add.cityLabel')}</label>
               <select
                 className={s.select}
                 value={form.city}
                 onChange={(e) => set('city', e.target.value)}
               >
-                {CITIES.map((c) => <option key={c}>{c}</option>)}
+                {CITIES.map((c) => (
+                  <option key={c} value={c}>
+                    {i18nStore.t('cities.' + c)}
+                  </option>
+                ))}
               </select>
             </div>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Адрес *</label>
+              <label className={s.label}>{i18nStore.t('add.addressLabel')}</label>
               <input
                 className={s.input}
-                placeholder="ул. Руставели, 10"
+                placeholder={i18nStore.t('add.addressPlaceholder')}
                 value={form.address}
                 onChange={(e) => set('address', e.target.value)}
                 required
@@ -242,23 +245,23 @@ export const AddEventPage = observer(() => {
           {/* Price + Spots */}
           <div className={s.row}>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Цена (₾) — 0 = бесплатно</label>
+              <label className={s.label}>{i18nStore.t('add.priceLabel')}</label>
               <input
                 type="number"
                 className={s.input}
                 min={0}
-                placeholder="50"
+                placeholder={i18nStore.t('add.pricePlaceholder')}
                 value={form.price}
                 onChange={(e) => set('price', e.target.value)}
               />
             </div>
             <div className={s.fieldGroup}>
-              <label className={s.label}>Количество мест</label>
+              <label className={s.label}>{i18nStore.t('add.spotsLabel')}</label>
               <input
                 type="number"
                 className={s.input}
                 min={1}
-                placeholder="20"
+                placeholder={i18nStore.t('add.spotsPlaceholder')}
                 value={form.spots}
                 onChange={(e) => set('spots', e.target.value)}
               />
@@ -267,7 +270,7 @@ export const AddEventPage = observer(() => {
 
           {/* Photo upload */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Фото мероприятия</label>
+            <label className={s.label}>{i18nStore.t('add.photoLabel')}</label>
             {imageUrl ? (
               <div className={s.previewWrap}>
                 <img src={imageUrl} alt="preview" className={s.preview} />
@@ -275,7 +278,7 @@ export const AddEventPage = observer(() => {
                   type="button"
                   className={s.removeImg}
                   onClick={() => setImageUrl('')}
-                  title="Удалить фото"
+                  title="Remove photo"
                 >✕</button>
               </div>
             ) : (
@@ -286,8 +289,7 @@ export const AddEventPage = observer(() => {
                 onDragOver={(e) => e.preventDefault()}
               >
                 <div className={s.uploadIcon}>📷</div>
-                <div className={s.uploadText}>Перетащите фото или нажмите для выбора</div>
-                <div className={s.uploadHint}>PNG, JPG до 10 МБ — сжимается автоматически</div>
+                <div className={s.uploadText}>{i18nStore.t('add.photoHint')}</div>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -301,10 +303,10 @@ export const AddEventPage = observer(() => {
 
           {/* Organizer */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Имя организатора *</label>
+            <label className={s.label}>{i18nStore.t('add.organizerLabel')}</label>
             <input
               className={s.input}
-              placeholder="Ваше имя или название студии"
+              placeholder={i18nStore.t('add.organizerPlaceholder')}
               value={form.organizer}
               onChange={(e) => set('organizer', e.target.value)}
               required
@@ -313,7 +315,7 @@ export const AddEventPage = observer(() => {
 
           {/* Payment Methods */}
           <div className={s.fieldGroup}>
-            <label className={s.label}>Способы оплаты (выберите хотя бы один) *</label>
+            <label className={s.label}>{i18nStore.t('add.paymentsLabel')}</label>
             <div className={s.checkboxGroup}>
               <label className={s.checkboxLabel}>
                 <input
@@ -321,7 +323,7 @@ export const AddEventPage = observer(() => {
                   checked={form.payOnSite}
                   onChange={(e) => set('payOnSite', e.target.checked)}
                 />
-                <span>Оплата на месте</span>
+                <span>{i18nStore.t('add.onsiteLabel')}</span>
               </label>
               <label className={s.checkboxLabel}>
                 <input
@@ -329,30 +331,30 @@ export const AddEventPage = observer(() => {
                   checked={form.payDirect}
                   onChange={(e) => set('payDirect', e.target.checked)}
                 />
-                <span>Прямой перевод организатору (TBC / BoG / телефон)</span>
+                <span>{i18nStore.t('add.directLabel')}</span>
               </label>
             </div>
           </div>
 
           {form.payDirect && (
             <div className={s.bankSection}>
-              <h4 className={s.bankTitle}>Реквизиты для перевода</h4>
+              <h4 className={s.bankTitle}>{i18nStore.t('add.bankSectionTitle')}</h4>
               <div className={s.row}>
                 <div className={s.fieldGroup}>
-                  <label className={s.label}>Название банка *</label>
+                  <label className={s.label}>{i18nStore.t('add.bankNameLabel')}</label>
                   <input
                     className={s.input}
-                    placeholder="Например: TBC Bank, Bank of Georgia"
+                    placeholder="TBC Bank, Bank of Georgia"
                     value={form.bankName}
                     onChange={(e) => set('bankName', e.target.value)}
                     required
                   />
                 </div>
                 <div className={s.fieldGroup}>
-                  <label className={s.label}>Получатель *</label>
+                  <label className={s.label}>{i18nStore.t('add.bankRecipientLabel')}</label>
                   <input
                     className={s.input}
-                    placeholder="Имя Фамилия получателя"
+                    placeholder="Name Surname"
                     value={form.bankRecipient}
                     onChange={(e) => set('bankRecipient', e.target.value)}
                     required
@@ -360,10 +362,10 @@ export const AddEventPage = observer(() => {
                 </div>
               </div>
               <div className={s.fieldGroup}>
-                <label className={s.label}>Номер счета (IBAN) или телефон *</label>
+                <label className={s.label}>{i18nStore.t('add.bankAccountLabel')}</label>
                 <input
                   className={s.input}
-                  placeholder="GE79BG... или +995..."
+                  placeholder={i18nStore.t('add.bankAccountPlaceholder')}
                   value={form.bankAccount}
                   onChange={(e) => set('bankAccount', e.target.value)}
                   required
@@ -379,7 +381,7 @@ export const AddEventPage = observer(() => {
             className={s.submitBtn}
             disabled={!isValid || submitting}
           >
-            {submitting ? 'Публикуем...' : 'Опубликовать мероприятие'}
+            {submitting ? i18nStore.t('add.submittingButton') : i18nStore.t('add.submitButton')}
           </button>
         </form>
       </div>

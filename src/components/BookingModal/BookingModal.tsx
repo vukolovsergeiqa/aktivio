@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+import { observer } from 'mobx-react-lite'
 import { X, CheckCircle, CreditCard, Wallet, Smartphone } from 'lucide-react'
+import { i18nStore } from '../../stores/i18n-store'
 import type { AktivioEvent } from '../../types'
 import s from './BookingModal.module.css'
 
@@ -10,7 +12,7 @@ interface Props {
   onBookSuccess: (guestName: string, guestPhone: string, paymentMethod: 'onsite' | 'direct' | 'card' | 'applepay') => void
 }
 
-export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
+export const BookingModal = observer(({ isOpen, onClose, event, onBookSuccess }: Props) => {
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
@@ -72,21 +74,21 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
   return (
     <div className={s.overlay} onClick={resetModal}>
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={s.closeBtn} onClick={resetModal} aria-label="Закрыть">
+        <button className={s.closeBtn} onClick={resetModal} aria-label="Close">
           <X size={20} />
         </button>
 
         {step === 1 && (
           <div>
-            <h3 className={s.modalTitle}>Запись на мероприятие</h3>
+            <h3 className={s.modalTitle}>{i18nStore.t('modal.title')}</h3>
             <p className={s.eventTitle}>{event.title}</p>
             <form onSubmit={handleNextStep}>
               <div className={s.field}>
-                <label className={s.label}>Ваше имя *</label>
+                <label className={s.label}>{i18nStore.t('modal.nameLabel')}</label>
                 <input
                   type="text"
                   className={s.input}
-                  placeholder="Иван Иванов"
+                  placeholder={i18nStore.t('modal.namePlaceholder')}
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   required
@@ -94,18 +96,18 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                 />
               </div>
               <div className={s.field}>
-                <label className={s.label}>Номер телефона *</label>
+                <label className={s.label}>{i18nStore.t('modal.phoneLabel')}</label>
                 <input
                   type="tel"
                   className={s.input}
-                  placeholder="+995 599 123 456"
+                  placeholder={i18nStore.t('modal.phonePlaceholder')}
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
                   required
                 />
               </div>
               <button type="submit" className={s.primaryBtn}>
-                Продолжить
+                {i18nStore.t('modal.continueBtn')}
               </button>
             </form>
           </div>
@@ -113,8 +115,10 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
 
         {step === 2 && (
           <div>
-            <h3 className={s.modalTitle}>Выбор способа оплаты</h3>
-            <p className={s.modalSub}>Сумма к оплате: <span className={s.priceHighlight}>{event.price} ₾</span></p>
+            <h3 className={s.modalTitle}>{i18nStore.t('modal.paymentTitle')}</h3>
+            <p className={s.modalSub}>
+              {i18nStore.t('modal.paymentSub', { price: event.price })}
+            </p>
 
             <div className={s.optionsGroup}>
               {payOnSite && (
@@ -125,8 +129,8 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   <div className={s.optionHeader}>
                     <Wallet className={s.optionIcon} size={20} />
                     <div>
-                      <div className={s.optionName}>Оплата на месте</div>
-                      <div className={s.optionDesc}>Наличными или картой организатору в день начала</div>
+                      <div className={s.optionName}>{i18nStore.t('modal.methodOnsite')}</div>
+                      <div className={s.optionDesc}>{i18nStore.t('modal.methodOnsiteDesc')}</div>
                     </div>
                   </div>
                 </div>
@@ -140,8 +144,8 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   <div className={s.optionHeader}>
                     <CreditCard className={s.optionIcon} size={20} />
                     <div>
-                      <div className={s.optionName}>Прямой перевод</div>
-                      <div className={s.optionDesc}>По реквизитам на TBC / BoG до мероприятия</div>
+                      <div className={s.optionName}>{i18nStore.t('modal.methodDirect')}</div>
+                      <div className={s.optionDesc}>{i18nStore.t('modal.methodDirectDesc')}</div>
                     </div>
                   </div>
                 </div>
@@ -156,9 +160,9 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   <CreditCard className={s.optionIcon} size={20} />
                   <div>
                     <div className={s.optionName}>
-                      Банковская карта <span className={s.badge}>Скоро / Тест</span>
+                      {i18nStore.t('modal.methodCard')} <span className={s.badge}>Soon / Test</span>
                     </div>
-                    <div className={s.optionDesc}>Оплата картой TBC / Bank of Georgia на сайте</div>
+                    <div className={s.optionDesc}>{i18nStore.t('modal.methodCardDesc')}</div>
                   </div>
                 </div>
               </div>
@@ -172,9 +176,9 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   <Smartphone className={s.optionIcon} size={20} />
                   <div>
                     <div className={s.optionName}>
-                      Apple Pay / Google Pay <span className={s.badge}>Скоро / Тест</span>
+                      {i18nStore.t('modal.methodApple')} <span className={s.badge}>Soon / Test</span>
                     </div>
-                    <div className={s.optionDesc}>Быстрая оплата в один клик</div>
+                    <div className={s.optionDesc}>{i18nStore.t('modal.methodAppleDesc')}</div>
                   </div>
                 </div>
               </div>
@@ -182,44 +186,44 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
 
             {paymentMethod === 'direct' && event.bankDetails && (
               <div className={s.bankDetailsCard}>
-                <h4 className={s.bankHeader}>Реквизиты для перевода:</h4>
+                <h4 className={s.bankHeader}>{i18nStore.t('modal.bankDetailsTitle')}</h4>
                 <div className={s.detailRow}>
-                  <span className={s.detailLabel}>Банк:</span>
+                  <span className={s.detailLabel}>{i18nStore.t('modal.bankName')}</span>
                   <span className={s.detailValue}>{event.bankDetails.bankName}</span>
                 </div>
                 <div className={s.detailRow}>
-                  <span className={s.detailLabel}>Получатель:</span>
+                  <span className={s.detailLabel}>{i18nStore.t('modal.bankRecipient')}</span>
                   <span className={s.detailValue}>{event.bankDetails.recipient}</span>
                 </div>
                 <div className={s.detailRow}>
-                  <span className={s.detailLabel}>Номер телефона / IBAN:</span>
+                  <span className={s.detailLabel}>{i18nStore.t('modal.bankAccount')}</span>
                   <span className={s.detailValue} style={{ fontWeight: 'bold' }}>{event.bankDetails.account}</span>
                 </div>
-                <p className={s.bankHint}>
-                  ⚠️ Пожалуйста, переведите <strong>{event.price} ₾</strong> по указанным реквизитам и сохраните чек. Организатор свяжется с вами по указанному телефону для подтверждения бронирования.
-                </p>
+                <p className={s.bankHint} dangerouslySetInnerHTML={{
+                  __html: i18nStore.t('modal.bankTransferHint', { price: event.price })
+                }} />
                 <button className={s.primaryBtn} onClick={handleConfirmDirectPayment}>
-                  Я перевел сумму, подтвердить
+                  {i18nStore.t('modal.confirmDirectBtn')}
                 </button>
               </div>
             )}
 
             {paymentMethod === 'onsite' && (
               <button className={s.primaryBtn} style={{ marginTop: '20px' }} onClick={handleConfirmOnSitePayment}>
-                Забронировать с оплатой на месте
+                {i18nStore.t('modal.confirmOnsiteBtn')}
               </button>
             )}
 
             {paymentMethod === 'card' && (
               <div className={s.bankDetailsCard}>
-                <h4 className={s.bankHeader}>💳 Оплата картой (Тестовый шлюз TBC)</h4>
+                <h4 className={s.bankHeader}>💳 {i18nStore.t('modal.methodCard')} (Test Gateway)</h4>
                 <div className={s.cardField}>
-                  <label className={s.cardLabel}>Номер карты</label>
+                  <label className={s.cardLabel}>Card Number</label>
                   <input type="text" className={s.cardInput} placeholder="4444 4444 4444 4444" defaultValue="4444 5555 6666 7777" disabled />
                 </div>
                 <div className={s.cardRow}>
                   <div className={s.cardField}>
-                    <label className={s.cardLabel}>Срок действия</label>
+                    <label className={s.cardLabel}>Expiry</label>
                     <input type="text" className={s.cardInput} placeholder="MM/YY" defaultValue="12/29" disabled />
                   </div>
                   <div className={s.cardField}>
@@ -228,16 +232,16 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   </div>
                 </div>
                 <button className={s.primaryBtn} style={{ marginTop: '16px' }} onClick={handleCardPayClick} disabled={paying}>
-                  {paying ? 'Обработка платежа TBC Checkout...' : `Оплатить ${event.price} ₾ (Тест)`}
+                  {paying ? i18nStore.t('modal.payingCard') : i18nStore.t('modal.confirmCardBtn', { price: event.price })}
                 </button>
               </div>
             )}
 
             {paymentMethod === 'applepay' && (
               <div className={s.bankDetailsCard}>
-                <h4 className={s.bankHeader}> Apple Pay / G Pay (Тест)</h4>
+                <h4 className={s.bankHeader}> Apple Pay / G Pay (Test)</h4>
                 <button className={s.applePayBtn} onClick={handleApplePayClick} disabled={paying}>
-                  {paying ? 'Авторизация...' : ' Pay / Google Pay'}
+                  {paying ? i18nStore.t('modal.payingApple') : ' Pay / Google Pay'}
                 </button>
               </div>
             )}
@@ -247,31 +251,31 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
         {step === 3 && (
           <div className={s.successContainer}>
             <CheckCircle className={s.successIcon} size={56} />
-            <h3 className={s.successTitle}>Успешно забронировано!</h3>
+            <h3 className={s.successTitle}>{i18nStore.t('modal.successTitle')}</h3>
             <p className={s.successText}>
-              Вы записались на мероприятие <strong>«{event.title}»</strong>.
+              {i18nStore.t('modal.successText', { title: event.title })}
             </p>
             {paymentMethod === 'direct' && (
               <p className={s.successSubtext}>
-                Организатор проверит перевод и свяжется с вами по телефону <strong>{guestPhone}</strong> в ближайшее время.
+                {i18nStore.t('modal.successSubDirect', { phone: guestPhone })}
               </p>
             )}
             {paymentMethod === 'onsite' && (
               <p className={s.successSubtext}>
-                Сумма к оплате на месте: <strong>{event.price} ₾</strong>. Организатор свяжется с вами для подтверждения деталей.
+                {i18nStore.t('modal.successSubOnsite', { price: event.price })}
               </p>
             )}
             {(paymentMethod === 'card' || paymentMethod === 'applepay') && (
               <p className={s.successSubtext}>
-                🎉 Имитация оплаты завершена! Сумма <strong>{event.price} ₾</strong> успешно списана. Организатор свяжется с вами по телефону <strong>{guestPhone}</strong>.
+                {i18nStore.t('modal.successSubCard', { price: event.price, phone: guestPhone })}
               </p>
             )}
             <button className={s.primaryBtn} onClick={resetModal}>
-              Отлично
+              {i18nStore.t('modal.successBtn')}
             </button>
           </div>
         )}
       </div>
     </div>
   )
-}
+})

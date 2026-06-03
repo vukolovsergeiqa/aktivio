@@ -3,12 +3,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { ArrowLeft, Calendar, MapPin, Users, Clock } from 'lucide-react'
 import { eventsStore } from '../../stores/events-store'
-import { CATEGORY_LABELS } from '../../types'
+import { i18nStore } from '../../stores/i18n-store'
 import { BookingModal } from '../../components/BookingModal/BookingModal'
 import s from './EventPage.module.css'
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('ru-RU', {
+function formatDate(dateStr: string, lang: string) {
+  const locale = lang === 'ka' ? 'ka-GE' : lang === 'ru' ? 'ru-RU' : 'en-US'
+  return new Date(dateStr).toLocaleDateString(locale, {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 }
@@ -18,14 +19,15 @@ export const EventPage = observer(() => {
   const navigate = useNavigate()
   const [isBookingOpen, setIsBookingOpen] = useState(false)
   const event = eventsStore.getEventById(id ?? '')
+  const { currentLang } = i18nStore
 
   if (!event) {
     return (
       <div className={`container ${s.notFound}`}>
         <p style={{ fontSize: '3rem' }}>🔍</p>
-        <h2>Мероприятие не найдено</h2>
+        <h2>Event not found</h2>
         <Link to="/" className="btn-primary" style={{ marginTop: 20, display: 'inline-flex' }}>
-          На главную
+          Go to Home
         </Link>
       </div>
     )
@@ -50,7 +52,7 @@ export const EventPage = observer(() => {
   }
 
   function handleDelete() {
-    if (confirm(`Удалить мероприятие «${eventTitle}»?`)) {
+    if (confirm(i18nStore.t('event.deleteConfirm', { title: eventTitle }))) {
       eventsStore.deleteEvent(eventId)
       navigate('/')
     }
@@ -61,7 +63,7 @@ export const EventPage = observer(() => {
       <div className="container">
         <Link to="/" className={s.back}>
           <ArrowLeft size={16} />
-          Все мероприятия
+          {i18nStore.t('event.allEvents')}
         </Link>
 
         <div className={s.layout}>
@@ -69,40 +71,42 @@ export const EventPage = observer(() => {
           <div>
             <div className={s.imageWrap}>
               <img src={event.imageUrl} alt={event.title} className={s.image} />
-              <span className={s.badge}>{CATEGORY_LABELS[event.category]}</span>
+              <span className={s.badge}>{i18nStore.t('categories.' + event.category)}</span>
             </div>
 
             <h1 className={s.title}>{event.title}</h1>
 
             <div className={s.metaRow}>
-              <div className={s.metaItem}><Calendar size={16} />{formatDate(event.date)}</div>
+              <div className={s.metaItem}><Calendar size={16} />{formatDate(event.date, currentLang)}</div>
               <div className={s.metaItem}><Clock size={16} />{event.time}</div>
-              <div className={s.metaItem}><MapPin size={16} />{event.city}, {event.address}</div>
-              <div className={s.metaItem}><Users size={16} />{event.spots} мест</div>
+              <div className={s.metaItem}><MapPin size={16} />{i18nStore.t('cities.' + event.city)}, {event.address}</div>
+              <div className={s.metaItem}><Users size={16} />{i18nStore.t('event.spots', { count: event.spots })}</div>
             </div>
 
             <div className={s.divider} />
 
             <div>
-              <p className={s.sectionLabel}>О мероприятии</p>
+              <p className={s.sectionLabel}>{i18nStore.t('event.organizer')}</p>
               <p className={s.description}>{event.description}</p>
             </div>
 
             {eventsStore.currentRole === 'admin' && (
               <div className={s.bookingsSection}>
-                <h3 className={s.bookingsTitle}>Список записей ({bookings.length})</h3>
+                <h3 className={s.bookingsTitle}>
+                  {i18nStore.t('event.bookingsTitle', { count: bookings.length })}
+                </h3>
                 {bookings.length === 0 ? (
-                  <p className={s.noBookings}>Записей на это мероприятие пока нет.</p>
+                  <p className={s.noBookings}>{i18nStore.t('event.noBookings')}</p>
                 ) : (
                   <div className={s.tableWrap}>
                     <table className={s.table}>
                       <thead>
                         <tr>
-                          <th>Имя гостя</th>
-                          <th>Телефон</th>
-                          <th>Оплата</th>
-                          <th>Дата записи</th>
-                          <th>Действие</th>
+                          <th>{i18nStore.t('event.guestName')}</th>
+                          <th>{i18nStore.t('event.phone')}</th>
+                          <th>{i18nStore.t('event.payment')}</th>
+                          <th>{i18nStore.t('event.bookingDate')}</th>
+                          <th>{i18nStore.t('event.action')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -117,23 +121,23 @@ export const EventPage = observer(() => {
                                 s.payBadgeCard
                               }>
                                 {
-                                  b.paymentMethod === 'direct' ? 'Перевод' :
-                                  b.paymentMethod === 'onsite' ? 'На месте' :
-                                  b.paymentMethod === 'card' ? 'Карта' : 'Apple Pay'
+                                  b.paymentMethod === 'direct' ? i18nStore.t('modal.methodDirect') :
+                                  b.paymentMethod === 'onsite' ? i18nStore.t('modal.methodOnsite') :
+                                  b.paymentMethod === 'card' ? i18nStore.t('modal.methodCard') : 'Apple Pay'
                                 }
                               </span>
                             </td>
-                            <td>{new Date(b.createdAt).toLocaleDateString('ru-RU')}</td>
+                            <td>{new Date(b.createdAt).toLocaleDateString(currentLang === 'ka' ? 'ka-GE' : currentLang === 'ru' ? 'ru-RU' : 'en-US')}</td>
                             <td>
                               <button
                                 className={s.deleteBookingBtn}
                                 onClick={() => {
-                                  if (confirm(`Отменить запись гостя ${b.guestName}?`)) {
+                                  if (confirm(i18nStore.t('event.cancelConfirm', { name: b.guestName }))) {
                                     eventsStore.deleteBooking(b.id)
                                   }
                                 }}
                               >
-                                Отменить запись
+                                {i18nStore.t('event.cancelBooking')}
                               </button>
                             </td>
                           </tr>
@@ -148,19 +152,21 @@ export const EventPage = observer(() => {
 
           {/* Right sticky */}
           <div className={s.sideCard}>
-            <div className={s.price}>{event.price === 0 ? 'Бесплатно' : `${event.price} ₾`}</div>
-            <div className={s.priceLabel}>за человека</div>
+            <div className={s.price}>
+              {event.price === 0 ? i18nStore.t('event.free') : `${event.price} ₾`}
+            </div>
+            <div className={s.priceLabel}>{i18nStore.t('event.perPerson')}</div>
 
             {event.spots <= 5 && event.spots > 0 && (
               <div className={s.spotsAlert}>
-                🔥 Осталось {event.spots} мест
+                {i18nStore.t('event.spotsLeft', { count: event.spots })}
               </div>
             )}
 
             <button className={s.bookBtn} onClick={handleBook}>
-              Забронировать место
+              {i18nStore.t('event.bookButton')}
             </button>
-            <p className={s.mockNote}>Оплата на месте · Демо-режим</p>
+            <p className={s.mockNote}>{i18nStore.t('event.paymentOnSiteNote')}</p>
 
             <div className={s.sideDivider} />
 
@@ -168,7 +174,7 @@ export const EventPage = observer(() => {
               <div className={s.avatar}>{initials}</div>
               <div>
                 <div className={s.orgName}>{event.organizer}</div>
-                <div className={s.orgLabel}>Организатор</div>
+                <div className={s.orgLabel}>{i18nStore.t('event.organizer')}</div>
               </div>
             </div>
 
@@ -176,7 +182,7 @@ export const EventPage = observer(() => {
               <>
                 <div className={s.sideDivider} />
                 <button className={s.deleteBtn} onClick={handleDelete}>
-                  Удалить мероприятие
+                  {i18nStore.t('event.deleteButton')}
                 </button>
               </>
             )}

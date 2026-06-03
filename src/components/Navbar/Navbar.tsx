@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { Plus } from 'lucide-react'
 import { eventsStore } from '../../stores/events-store'
+import { i18nStore } from '../../stores/i18n-store'
 import s from './Navbar.module.css'
 
 export const Navbar = observer(() => {
@@ -18,7 +19,7 @@ export const Navbar = observer(() => {
           {!isAdd && currentRole === 'admin' && (
             <Link to="/add" className="btn-primary">
               <Plus size={16} />
-              Добавить
+              {i18nStore.t('nav.add')}
             </Link>
           )}
 
@@ -28,14 +29,38 @@ export const Navbar = observer(() => {
               className={`${s.roleBtn} ${currentRole === 'guest' ? s.roleBtnActive : ''}`}
               onClick={() => eventsStore.setRole('guest')}
             >
-              Гость
+              {i18nStore.t('nav.roleGuest')}
             </button>
             <button
               type="button"
               className={`${s.roleBtn} ${currentRole === 'admin' ? s.roleBtnActive : ''}`}
               onClick={() => eventsStore.setRole('admin')}
             >
-              Админ
+              {i18nStore.t('nav.roleAdmin')}
+            </button>
+          </div>
+
+          <div className={s.langSwitcher}>
+            <button
+              type="button"
+              className={`${s.langBtn} ${i18nStore.currentLang === 'en' ? s.langBtnActive : ''}`}
+              onClick={() => i18nStore.setLanguage('en')}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={`${s.langBtn} ${i18nStore.currentLang === 'ru' ? s.langBtnActive : ''}`}
+              onClick={() => i18nStore.setLanguage('ru')}
+            >
+              RU
+            </button>
+            <button
+              type="button"
+              className={`${s.langBtn} ${i18nStore.currentLang === 'ka' ? s.langBtnActive : ''}`}
+              onClick={() => i18nStore.setLanguage('ka')}
+            >
+              GE
             </button>
           </div>
         </nav>
