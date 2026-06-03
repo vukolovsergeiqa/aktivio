@@ -187,3 +187,81 @@
   text-align: center;
   padding: 100px 20px;
 }
+
+.bookingsSection {
+  margin-top: 40px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.bookingsTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.noBookings {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.table th, .table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.table td {
+  color: var(--color-text);
+}
+
+.payBadgeDirect, .payBadgeOnSite {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.payBadgeDirect {
+  background: #ebf8ff;
+  color: #2b6cb0;
+}
+
+.payBadgeOnSite {
+  background: #f0fff4;
+  color: #22543d;
+}
+
+.deleteBookingBtn {
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.deleteBookingBtn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

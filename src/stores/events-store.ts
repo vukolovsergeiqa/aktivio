@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx'
-import type { AktivioEvent, EventCategory, UserRole } from '../types'
+import type { AktivioEvent, EventCategory, UserRole, Booking } from '../types'
 
 const STORAGE_KEY = 'aktivio_events'
+const BOOKINGS_KEY = 'aktivio_bookings'
 
 const DEMO_EVENTS: AktivioEvent[] = [
   {
@@ -19,6 +20,13 @@ const DEMO_EVENTS: AktivioEvent[] = [
     imageUrl: '/images/event_wine.png',
     organizer: 'Нино Кварацхелия',
     createdAt: new Date().toISOString(),
+    payOnSite: true,
+    payDirect: true,
+    bankDetails: {
+      bankName: 'TBC Bank',
+      recipient: 'Нино Кварацхелия',
+      account: '+995555123456',
+    },
   },
   {
     id: 'demo-2',
@@ -35,6 +43,13 @@ const DEMO_EVENTS: AktivioEvent[] = [
     imageUrl: '/images/event_pottery.png',
     organizer: 'Студия «Тонэ»',
     createdAt: new Date().toISOString(),
+    payOnSite: true,
+    payDirect: true,
+    bankDetails: {
+      bankName: 'Bank of Georgia',
+      recipient: 'Студия Тонэ (Гиорги Г.)',
+      account: 'GE79BG0000000123456789',
+    },
   },
   {
     id: 'demo-3',
@@ -51,11 +66,41 @@ const DEMO_EVENTS: AktivioEvent[] = [
     imageUrl: '/images/event_cooking.png',
     organizer: 'Тамара Джапаридзе',
     createdAt: new Date().toISOString(),
+    payOnSite: true,
+    payDirect: false,
+  },
+]
+
+const DEMO_BOOKINGS: Booking[] = [
+  {
+    id: 'b-1',
+    eventId: 'demo-1',
+    guestName: 'Александр Петров',
+    guestPhone: '+995555987654',
+    paymentMethod: 'direct',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'b-2',
+    eventId: 'demo-1',
+    guestName: 'Мария Иванова',
+    guestPhone: '+995599112233',
+    paymentMethod: 'onsite',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'b-3',
+    eventId: 'demo-2',
+    guestName: 'Давид К.',
+    guestPhone: '+995577445566',
+    paymentMethod: 'direct',
+    createdAt: new Date().toISOString(),
   },
 ]
 
 class EventsStore {
   events: AktivioEvent[] = []
+  bookings: Booking[] = []
   filterCategory: EventCategory | 'all' = 'all'
   filterCity: string = 'all'
   searchQuery: string = ''
@@ -72,20 +117,34 @@ class EventsStore {
       if (savedRole === 'admin' || savedRole === 'guest') {
         this.currentRole = savedRole
       }
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) {
-        this.events = JSON.parse(raw)
+      
+      const rawEvents = localStorage.getItem(STORAGE_KEY)
+      if (rawEvents) {
+        this.events = JSON.parse(rawEvents)
       } else {
         this.events = DEMO_EVENTS
         this.saveToStorage()
       }
+
+      const rawBookings = localStorage.getItem(BOOKINGS_KEY)
+      if (rawBookings) {
+        this.bookings = JSON.parse(rawBookings)
+      } else {
+        this.bookings = DEMO_BOOKINGS
+        this.saveBookingsToStorage()
+      }
     } catch {
       this.events = DEMO_EVENTS
+      this.bookings = DEMO_BOOKINGS
     }
   }
 
   private saveToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.events))
+  }
+
+  private saveBookingsToStorage() {
+    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(this.bookings))
   }
 
   addEvent(data: Omit<AktivioEvent, 'id' | 'createdAt'>) {
@@ -123,6 +182,41 @@ class EventsStore {
   setRole(role: UserRole) {
     this.currentRole = role
     localStorage.setItem('aktivio_role', role)
+  }
+
+  getBookingsByEventId(eventId: string): Booking[] {
+    return this.bookings.filter((b) => b.eventId === eventId)
+  }
+
+  addBooking(data: Omit<Booking, 'id' | 'createdAt'>) {
+    const booking: Booking = {
+      ...data,
+      id: `bk-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    }
+    this.bookings.push(booking)
+    this.saveBookingsToStorage()
+    
+    const event = this.getEventById(data.eventId)
+    if (event && event.spots > 0) {
+      event.spots -= 1
+      this.saveToStorage()
+    }
+
+    return booking
+  }
+
+  deleteBooking(id: string) {
+    const booking = this.bookings.find((b) => b.id === id)
+    if (booking) {
+      const event = this.getEventById(booking.eventId)
+      if (event) {
+        event.spots += 1
+        this.saveToStorage()
+      }
+    }
+    this.bookings = this.bookings.filter((b) => b.id !== id)
+    this.saveBookingsToStorage()
   }
 
   get filteredEvents(): AktivioEvent[] {

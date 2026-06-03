@@ -71,11 +71,16 @@ export const AddEventPage = observer(() => {
     price: '',
     spots: '',
     organizer: '',
+    payOnSite: true,
+    payDirect: false,
+    bankName: '',
+    bankRecipient: '',
+    bankAccount: '',
   })
   const [imageUrl, setImageUrl] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const set = (field: string, value: string) =>
+  const set = (field: string, value: any) =>
     setForm((prev) => ({ ...prev, [field]: value }))
 
   const handleImageUpload = useCallback(async (file: File) => {
@@ -104,7 +109,8 @@ export const AddEventPage = observer(() => {
     form.date &&
     form.time &&
     form.address.trim() &&
-    form.organizer.trim()
+    form.organizer.trim() &&
+    (form.payOnSite || (form.payDirect && form.bankName.trim() && form.bankRecipient.trim() && form.bankAccount.trim()))
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -122,6 +128,13 @@ export const AddEventPage = observer(() => {
       spots: Number(form.spots) || 20,
       imageUrl: imageUrl || '/images/event_wine.png',
       organizer: form.organizer.trim(),
+      payOnSite: form.payOnSite,
+      payDirect: form.payDirect,
+      bankDetails: form.payDirect ? {
+        bankName: form.bankName.trim(),
+        recipient: form.bankRecipient.trim(),
+        account: form.bankAccount.trim(),
+      } : undefined
     })
     navigate(`/event/${id}`)
   }
@@ -297,6 +310,67 @@ export const AddEventPage = observer(() => {
               required
             />
           </div>
+
+          {/* Payment Methods */}
+          <div className={s.fieldGroup}>
+            <label className={s.label}>Способы оплаты (выберите хотя бы один) *</label>
+            <div className={s.checkboxGroup}>
+              <label className={s.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={form.payOnSite}
+                  onChange={(e) => set('payOnSite', e.target.checked)}
+                />
+                <span>Оплата на месте</span>
+              </label>
+              <label className={s.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={form.payDirect}
+                  onChange={(e) => set('payDirect', e.target.checked)}
+                />
+                <span>Прямой перевод организатору (TBC / BoG / телефон)</span>
+              </label>
+            </div>
+          </div>
+
+          {form.payDirect && (
+            <div className={s.bankSection}>
+              <h4 className={s.bankTitle}>Реквизиты для перевода</h4>
+              <div className={s.row}>
+                <div className={s.fieldGroup}>
+                  <label className={s.label}>Название банка *</label>
+                  <input
+                    className={s.input}
+                    placeholder="Например: TBC Bank, Bank of Georgia"
+                    value={form.bankName}
+                    onChange={(e) => set('bankName', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className={s.fieldGroup}>
+                  <label className={s.label}>Получатель *</label>
+                  <input
+                    className={s.input}
+                    placeholder="Имя Фамилия получателя"
+                    value={form.bankRecipient}
+                    onChange={(e) => set('bankRecipient', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className={s.fieldGroup}>
+                <label className={s.label}>Номер счета (IBAN) или телефон *</label>
+                <input
+                  className={s.input}
+                  placeholder="GE79BG... или +995..."
+                  value={form.bankAccount}
+                  onChange={(e) => set('bankAccount', e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
 
           <div className={s.divider} />
 

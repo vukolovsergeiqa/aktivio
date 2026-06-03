@@ -37,4 +37,20 @@ export interface AktivioEvent {
   imageUrl: string   // '/images/...' для демо, base64 для загруженных
   organizer: string
   createdAt: string
+  payOnSite: boolean
+  payDirect: boolean
+  bankDetails?: {
+    bankName: string
+    recipient: string
+    account: string
+  }
+}
+
+export interface Booking {
+  id: string
+  eventId: string
+  guestName: string
+  guestPhone: string
+  paymentMethod: 'onsite' | 'direct'
+  createdAt: string
 }
