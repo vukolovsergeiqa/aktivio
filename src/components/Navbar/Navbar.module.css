@@ -23,6 +23,14 @@
   letter-spacing: -0.02em;
 }
 
+.addBtn {
+  /* Placeholder for CSS modules export */
+}
+
+.addText {
+  /* Placeholder for CSS modules export */
+}
+
 .nav {
   display: flex;
   align-items: center;
