@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, CheckCircle, CreditCard, Wallet } from 'lucide-react'
+import { X, CheckCircle, CreditCard, Wallet, Smartphone } from 'lucide-react'
 import type { AktivioEvent } from '../../types'
 import s from './BookingModal.module.css'
 
@@ -7,14 +7,15 @@ interface Props {
   isOpen: boolean
   onClose: () => void
   event: AktivioEvent
-  onBookSuccess: (guestName: string, guestPhone: string, paymentMethod: 'onsite' | 'direct') => void
+  onBookSuccess: (guestName: string, guestPhone: string, paymentMethod: 'onsite' | 'direct' | 'card' | 'applepay') => void
 }
 
 export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<'onsite' | 'direct' | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<'onsite' | 'direct' | 'card' | 'applepay' | null>(null)
+  const [paying, setPaying] = useState(false)
 
   if (!isOpen) return null
 
@@ -25,20 +26,7 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault()
     if (!guestName.trim() || !guestPhone.trim()) return
-
-    // If only one payment option is available, select it automatically and go to success or show instructions
-    if (payOnSite && !payDirect) {
-      setPaymentMethod('onsite')
-      // Complete booking immediately
-      onBookSuccess(guestName.trim(), guestPhone.trim(), 'onsite')
-      setStep(3)
-    } else if (!payOnSite && payDirect) {
-      setPaymentMethod('direct')
-      setStep(2) // Need to show bank details
-    } else {
-      // Both options are available, let the user select
-      setStep(2)
-    }
+    setStep(2)
   }
 
   const handleConfirmDirectPayment = () => {
@@ -52,14 +40,39 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
     setStep(3)
   }
 
-  const handleSelectMethod = (method: 'onsite' | 'direct') => {
+  const handleCardPayClick = () => {
+    setPaying(true)
+    setTimeout(() => {
+      setPaying(false)
+      onBookSuccess(guestName.trim(), guestPhone.trim(), 'card')
+      setStep(3)
+    }, 1500)
+  }
+
+  const handleApplePayClick = () => {
+    setPaying(true)
+    setTimeout(() => {
+      setPaying(false)
+      onBookSuccess(guestName.trim(), guestPhone.trim(), 'applepay')
+      setStep(3)
+    }, 1500)
+  }
+
+  const handleSelectMethod = (method: 'onsite' | 'direct' | 'card' | 'applepay') => {
     setPaymentMethod(method)
   }
 
+  const resetModal = () => {
+    setStep(1)
+    setPaymentMethod(null)
+    setPaying(false)
+    onClose()
+  }
+
   return (
-    <div className={s.overlay} onClick={onClose}>
+    <div className={s.overlay} onClick={resetModal}>
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={s.closeBtn} onClick={onClose} aria-label="Закрыть">
+        <button className={s.closeBtn} onClick={resetModal} aria-label="Закрыть">
           <X size={20} />
         </button>
 
@@ -133,6 +146,38 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                   </div>
                 </div>
               )}
+
+              {/* Blurred premium payment method: Card */}
+              <div
+                className={`${s.optionCard} ${s.optionCardBlurred} ${paymentMethod === 'card' ? s.optionCardActiveUnblurred : ''}`}
+                onClick={() => handleSelectMethod('card')}
+              >
+                <div className={s.optionHeader}>
+                  <CreditCard className={s.optionIcon} size={20} />
+                  <div>
+                    <div className={s.optionName}>
+                      Банковская карта <span className={s.badge}>Скоро / Тест</span>
+                    </div>
+                    <div className={s.optionDesc}>Оплата картой TBC / Bank of Georgia на сайте</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Blurred premium payment method: Apple/Google Pay */}
+              <div
+                className={`${s.optionCard} ${s.optionCardBlurred} ${paymentMethod === 'applepay' ? s.optionCardActiveUnblurred : ''}`}
+                onClick={() => handleSelectMethod('applepay')}
+              >
+                <div className={s.optionHeader}>
+                  <Smartphone className={s.optionIcon} size={20} />
+                  <div>
+                    <div className={s.optionName}>
+                      Apple Pay / Google Pay <span className={s.badge}>Скоро / Тест</span>
+                    </div>
+                    <div className={s.optionDesc}>Быстрая оплата в один клик</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {paymentMethod === 'direct' && event.bankDetails && (
@@ -164,6 +209,38 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
                 Забронировать с оплатой на месте
               </button>
             )}
+
+            {paymentMethod === 'card' && (
+              <div className={s.bankDetailsCard}>
+                <h4 className={s.bankHeader}>💳 Оплата картой (Тестовый шлюз TBC)</h4>
+                <div className={s.cardField}>
+                  <label className={s.cardLabel}>Номер карты</label>
+                  <input type="text" className={s.cardInput} placeholder="4444 4444 4444 4444" defaultValue="4444 5555 6666 7777" disabled />
+                </div>
+                <div className={s.cardRow}>
+                  <div className={s.cardField}>
+                    <label className={s.cardLabel}>Срок действия</label>
+                    <input type="text" className={s.cardInput} placeholder="MM/YY" defaultValue="12/29" disabled />
+                  </div>
+                  <div className={s.cardField}>
+                    <label className={s.cardLabel}>CVC</label>
+                    <input type="text" className={s.cardInput} placeholder="123" defaultValue="777" disabled />
+                  </div>
+                </div>
+                <button className={s.primaryBtn} style={{ marginTop: '16px' }} onClick={handleCardPayClick} disabled={paying}>
+                  {paying ? 'Обработка платежа TBC Checkout...' : `Оплатить ${event.price} ₾ (Тест)`}
+                </button>
+              </div>
+            )}
+
+            {paymentMethod === 'applepay' && (
+              <div className={s.bankDetailsCard}>
+                <h4 className={s.bankHeader}> Apple Pay / G Pay (Тест)</h4>
+                <button className={s.applePayBtn} onClick={handleApplePayClick} disabled={paying}>
+                  {paying ? 'Авторизация...' : ' Pay / Google Pay'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -174,16 +251,22 @@ export function BookingModal({ isOpen, onClose, event, onBookSuccess }: Props) {
             <p className={s.successText}>
               Вы записались на мероприятие <strong>«{event.title}»</strong>.
             </p>
-            {paymentMethod === 'direct' ? (
+            {paymentMethod === 'direct' && (
               <p className={s.successSubtext}>
                 Организатор проверит перевод и свяжется с вами по телефону <strong>{guestPhone}</strong> в ближайшее время.
               </p>
-            ) : (
+            )}
+            {paymentMethod === 'onsite' && (
               <p className={s.successSubtext}>
                 Сумма к оплате на месте: <strong>{event.price} ₾</strong>. Организатор свяжется с вами для подтверждения деталей.
               </p>
             )}
-            <button className={s.primaryBtn} onClick={onClose}>
+            {(paymentMethod === 'card' || paymentMethod === 'applepay') && (
+              <p className={s.successSubtext}>
+                🎉 Имитация оплаты завершена! Сумма <strong>{event.price} ₾</strong> успешно списана. Организатор свяжется с вами по телефону <strong>{guestPhone}</strong>.
+              </p>
+            )}
+            <button className={s.primaryBtn} onClick={resetModal}>
               Отлично
             </button>
           </div>

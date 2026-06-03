@@ -51,6 +51,6 @@ export interface Booking {
   eventId: string
   guestName: string
   guestPhone: string
-  paymentMethod: 'onsite' | 'direct'
+  paymentMethod: 'onsite' | 'direct' | 'card' | 'applepay'
   createdAt: string
 }

@@ -40,7 +40,7 @@ export const EventPage = observer(() => {
     setIsBookingOpen(true)
   }
 
-  function handleBookSuccess(guestName: string, guestPhone: string, paymentMethod: 'onsite' | 'direct') {
+  function handleBookSuccess(guestName: string, guestPhone: string, paymentMethod: 'onsite' | 'direct' | 'card' | 'applepay') {
     eventsStore.addBooking({
       eventId,
       guestName,
@@ -111,8 +111,16 @@ export const EventPage = observer(() => {
                             <td style={{ fontWeight: 500 }}>{b.guestName}</td>
                             <td>{b.guestPhone}</td>
                             <td>
-                              <span className={b.paymentMethod === 'direct' ? s.payBadgeDirect : s.payBadgeOnSite}>
-                                {b.paymentMethod === 'direct' ? 'Перевод' : 'На месте'}
+                              <span className={
+                                b.paymentMethod === 'direct' ? s.payBadgeDirect :
+                                b.paymentMethod === 'onsite' ? s.payBadgeOnSite :
+                                s.payBadgeCard
+                              }>
+                                {
+                                  b.paymentMethod === 'direct' ? 'Перевод' :
+                                  b.paymentMethod === 'onsite' ? 'На месте' :
+                                  b.paymentMethod === 'card' ? 'Карта' : 'Apple Pay'
+                                }
                               </span>
                             </td>
                             <td>{new Date(b.createdAt).toLocaleDateString('ru-RU')}</td>

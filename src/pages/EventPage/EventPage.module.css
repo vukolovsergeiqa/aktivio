@@ -251,6 +251,11 @@
   color: #22543d;
 }
 
+.payBadgeCard {
+  background: #faf5ff;
+  color: #6b46c1;
+}
+
 .deleteBookingBtn {
   color: var(--color-accent);
   font-size: 0.8125rem;
