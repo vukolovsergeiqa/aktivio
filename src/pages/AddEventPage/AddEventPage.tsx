@@ -5,6 +5,8 @@ import { eventsStore } from '../../stores/events-store'
 import { i18nStore } from '../../stores/i18n-store'
 import { CATEGORIES, CITIES } from '../../types'
 import type { EventCategory } from '../../types'
+import { DatePicker } from '../../components/DatePicker/DatePicker'
+import { TimePicker } from '../../components/TimePicker/TimePicker'
 import s from './AddEventPage.module.css'
 
 function compressImage(file: File): Promise<string> {
@@ -193,22 +195,18 @@ export const AddEventPage = observer(() => {
           <div className={s.row}>
             <div className={s.fieldGroup}>
               <label className={s.label}>{i18nStore.t('add.dateLabel')}</label>
-              <input
-                type="date"
-                className={s.input}
+              <DatePicker
                 value={form.date}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={(e) => set('date', e.target.value)}
+                onChange={(val) => set('date', val)}
+                minDate={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
             <div className={s.fieldGroup}>
               <label className={s.label}>{i18nStore.t('add.timeLabel')}</label>
-              <input
-                type="time"
-                className={s.input}
+              <TimePicker
                 value={form.time}
-                onChange={(e) => set('time', e.target.value)}
+                onChange={(val) => set('time', val)}
                 required
               />
             </div>
