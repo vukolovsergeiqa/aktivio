@@ -51,12 +51,20 @@
   border-bottom: 1px solid var(--color-border);
   background: var(--color-bg);
 }
+.filtersOuter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+}
 .filtersInner {
   display: flex;
   align-items: center;
   gap: 10px;
   overflow-x: auto;
   scrollbar-width: none;
+  flex-grow: 1;
 }
 .filtersInner::-webkit-scrollbar { display: none; }
 

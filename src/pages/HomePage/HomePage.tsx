@@ -34,22 +34,24 @@ export const HomePage = observer(() => {
 
       {/* Filters */}
       <div className={s.filters}>
-        <div className={`container ${s.filtersInner}`}>
-          <button
-            className={`${s.chip} ${filterCategory === 'all' ? s.chipActive : ''}`}
-            onClick={() => eventsStore.setFilterCategory('all')}
-          >
-            {i18nStore.t('home.allCats')}
-          </button>
-          {CATEGORIES.map((catKey) => (
+        <div className={`container ${s.filtersOuter}`}>
+          <div className={s.filtersInner}>
             <button
-              key={catKey}
-              className={`${s.chip} ${filterCategory === catKey ? s.chipActive : ''}`}
-              onClick={() => eventsStore.setFilterCategory(catKey)}
+              className={`${s.chip} ${filterCategory === 'all' ? s.chipActive : ''}`}
+              onClick={() => eventsStore.setFilterCategory('all')}
             >
-              {i18nStore.t('categories.' + catKey)}
+              {i18nStore.t('home.allCats')}
             </button>
-          ))}
+            {CATEGORIES.map((catKey) => (
+              <button
+                key={catKey}
+                className={`${s.chip} ${filterCategory === catKey ? s.chipActive : ''}`}
+                onClick={() => eventsStore.setFilterCategory(catKey)}
+              >
+                {i18nStore.t('categories.' + catKey)}
+              </button>
+            ))}
+          </div>
           <CitySelect
             value={filterCity}
             onChange={(val) => eventsStore.setFilterCity(val)}
