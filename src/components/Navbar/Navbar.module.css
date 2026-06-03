@@ -82,3 +82,37 @@
   color: var(--color-text);
   box-shadow: 0 1px 3px rgba(26, 26, 26, 0.08);
 }
+
+@media (max-width: 640px) {
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .nav {
+    gap: 8px;
+  }
+
+  .addText {
+    display: none;
+  }
+
+  .addBtn {
+    width: 36px;
+    height: 36px;
+    padding: 0 !important;
+    justify-content: center;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+  }
+
+  .roleBtn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+
+  .langBtn {
+    padding: 3px 6px;
+    font-size: 0.6875rem;
+  }
+}
+

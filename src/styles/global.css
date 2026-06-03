@@ -115,3 +115,9 @@ img {
   background: var(--color-hover);
   color: var(--color-text);
 }
+
+@media (max-width: 640px) {
+  :root {
+    --container-pad: 12px;
+  }
+}

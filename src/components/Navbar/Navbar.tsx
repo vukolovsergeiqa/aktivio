@@ -17,9 +17,9 @@ export const Navbar = observer(() => {
 
         <nav className={s.nav}>
           {!isAdd && currentRole === 'admin' && (
-            <Link to="/add" className="btn-primary">
+            <Link to="/add" className={`${s.addBtn} btn-primary`}>
               <Plus size={16} />
-              {i18nStore.t('nav.add')}
+              <span className={s.addText}>{i18nStore.t('nav.add')}</span>
             </Link>
           )}
 
