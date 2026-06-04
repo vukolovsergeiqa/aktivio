@@ -1,73 +1,102 @@
-# React + TypeScript + Vite
+# Aktivio — Агрегатор мероприятий и активностей в Грузии
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Aktivio** — это современная веб-платформа для поиска, бронирования и организации локальных мероприятий в Грузии (Тбилиси, Батуми, Кутаиси, Мцхета, Сигнахи). Проект ориентирован на экспатов, туристов и местных жителей, собирая в одном месте мастер-классы, дегустации, экскурсии, концерты, йогу и другие события.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Основные возможности
 
-## React Compiler
+### Для Пользователей (Гостей)
+* **Каталог и фильтрация**: Удобный поиск мероприятий с фильтрацией по категориям (дегустации, мастер-классы, туры и т.д.) и городам Грузии.
+* **Детальная страница события**: Просмотр всей ключевой информации (дата, время, место, языки проведения, цена, количество оставшихся мест, данные организатора).
+* **Интерактивное бронирование**: Встроенная форма записи с выбором способов оплаты:
+  * Оплата на месте (наличные или карта).
+  * Прямой банковский перевод организатору (BoG, TBC) с отображением реквизитов.
+  * Тестовая оплата картой или Apple Pay.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Для Организаторов (Администраторов)
+* **Быстрое переключение ролей**: В шапке сайта можно мгновенно переключиться в режим `Admin` (для тестирования и управления).
+* **Создание и редактирование мероприятий**: Удобная форма с возможностью указания:
+  * Названия, категории, описания и обложки события.
+  * Времени, даты, города и точного адреса.
+  * Стоимости (или отметка «Бесплатно») и лимита мест.
+  * Языков, на которых проводится мероприятие (EN, RU, GE).
+  * Способов оплаты и банковских реквизитов для переводов.
+* **Управление участниками**: Администратор видит полный список забронированных мест для каждого события с контактными данными гостей, временем регистрации и статусом оплаты, а также может отменять брони.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠 Технологический стек
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* **Фронтенд**: React 18, TypeScript, Vite.
+* **Управление состоянием**: MobX (`mobx-react-lite`) для реактивного и быстрого обновления данных без лишних ререндеров.
+* **Маршрутизация**: React Router DOM v6.
+* **Локализация (i18n)**: Собственная легкая система мультиязычности в `i18n-store.ts`. Поддерживаются три языка: **Английский (по умолчанию)**, **Русский** и **Грузинский**.
+* **Стилизация**: CSS-модули (Vanilla CSS Modules) для изоляции стилей компонентов. 
+* **Дизайн-система**: Уникальный премиальный дизайн в теплых тонах (терракотовый, кремовый, золотой), вдохновленный Грузией. Полностью кастомные элементы UI:
+  * Интерактивный календарь (DatePicker) и выбор времени (TimePicker).
+  * Стилизованный дропдаун выбора городов (CitySelect) в двух вариантах.
+  * Адаптивная шапка сайта, оптимизированная под экраны телефонов (кнопка добавления адаптируется в компактную круглую кнопку `+`).
+* **Иконки**: Lucide React.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Архитектура проекта
+
+```text
+src/
+├── components/          # Общие компоненты интерфейса
+│   ├── BookingModal/    # Модальное окно бронирования и оплаты
+│   ├── CitySelect/      # Кастомный выпадающий список городов
+│   ├── DatePicker/      # Кастомный выбор даты (календарь)
+│   ├── TimePicker/      # Кастомный выбор времени
+│   ├── EventCard/       # Карточка мероприятия на главной
+│   └── Navbar/          # Шапка сайта с переключателями ролей/языков
+├── pages/               # Страницы приложения
+│   ├── HomePage/        # Главная страница с фильтрами и списком событий
+│   ├── EventPage/       # Страница отдельного события (и список броней для админа)
+│   └── AddEventPage/    # Форма создания и редактирования событий (доступна в режиме Admin)
+├── stores/              # Хранилища состояния (MobX)
+│   ├── events-store.ts  # События, бронирования, активная роль пользователя
+│   └── i18n-store.ts    # Локализация и переключение языков
+├── styles/              # Глобальные стили и переменные
+│   └── global.css
+├── types.ts             # Типизация данных (Event, Booking и др.)
+├── App.tsx              # Конфигурация роутинга
+└── main.tsx             # Точка входа приложения
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 💼 Стратегия монетизации и юридическая модель
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Для коммерческого развития проекта Aktivio рассматриваются следующие подходы:
+
+### Способы монетизации
+1. **Транзакционная комиссия (5–15%)**: Удерживается с каждого бронирования, оплаченного онлайн. Это самая комфортная модель для организаторов, так как они платят только за результат.
+2. **Платное продвижение (Featured Events)**: Возможность закрепить событие на главной странице, подсветить его в каталоге или включить в регулярные e-mail/соцсети-рассылки за фиксированную плату.
+3. **Подписка (SaaS)**: Ежемесячный тариф для профессиональных организаторов (студий, лекториев) за расширенные функции: подробная аналитика, выгрузка баз участников, приоритетная поддержка.
+
+### Юридическое оформление
+* **Публичная оферта**: Отношения с владельцами курсов и организаторами регулируются публичным агентским договором-офертой, размещенным на сайте.
+* **Процесс заключения**: Организатор соглашается с условиями оферты («акцептует» её) в момент регистрации профиля или создания своего первого мероприятия (путем проставления чекбокса). Это исключает необходимость подписания физических документов.
+* **Финансовая схема**: В оферте фиксируется статус Aktivio как агента, принимающего платежи в пользу принципала (организатора) и выплачивающего их за вычетом комиссии платформы. В Грузии для этого оптимально зарегистрировать ИП со статусом малого бизнеса (налог 1%) или ООО.
+
+---
+
+## 💻 Локальный запуск
+
+1. Установите зависимости:
+   ```bash
+   npm install
+   ```
+2. Запустите сервер разработки:
+   ```bash
+   npm run dev
+   ```
+3. Откройте приложение в браузере по адресу: [http://localhost:5173](http://localhost:5173)
+
+Для сборки проекта под продакшн выполните:
+```bash
+npm run build
 ```
